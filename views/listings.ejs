@@ -1,0 +1,38 @@
+<%- layout("partials/boilerplate", { title, user }); %>
+  <div class="container">
+    <% if(!listings.length) { %>
+      <div class="error-container">
+        <h3 class="error-message">
+          <b>
+            <% if(myListings) { %>
+              Create Listings!!
+              <% } else { %>
+                Sorry!!! NO listings available now.
+                <% } %>
+          </b>
+        </h3>
+      </div>
+      <% } else { %>
+        <% for(listing of listings) { %>
+          <div class="my-card">
+            <a href="/listings/<%= listing._id %>">
+              <img class="listings-img" src="<%= listing.image %>" alt="image">
+              <div>
+                <div>
+                  <%= listing.title %>
+                </div>
+                <div>
+                  <div>
+                    &#8377; <%= listing.price.toLocaleString() %>
+                  </div>
+                  <div>
+                    <%= listing.createdAt.toLocaleDateString("en-IN", { year: 'numeric' , month: 'short' ,
+                      day: 'numeric' , }); %>, <%= listing.createdAt.toLocaleTimeString("th-EG").substring(0, 5) %>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+          <% } %>
+            <% } %>
+  </div>

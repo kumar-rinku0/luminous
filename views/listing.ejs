@@ -1,0 +1,70 @@
+<%- layout("partials/boilerplate", { title, user }); %>
+
+  <div class="listing-container">
+    <div class="listing">
+      <% if(listingCreatedBy) { %>
+        <div>created by <%= listingCreatedBy.username %>
+        </div>
+        <% } %>
+          <img class="listing-img" src="<%= listing.image %>" alt="image">
+          <div class="listing-content">
+            <h4 class="listing-heading">
+              <%= listing.title %>
+            </h4>
+            <p class="listing-description">
+              <%= listing.description %>
+            </p>
+            <div>
+              &#8377; <%= listing.price.toLocaleString() %>
+            </div>
+          </div>
+    </div>
+    <% if(user && listing.createdBy.toString()===user._id.toString()) { %>
+      <div>
+        <form action="/listings/<%= listing._id %>/<%= listing.createdBy %>" method="post">
+          <button type="submit" class="btn">delete Listing</button>
+        </form>
+      </div>
+      <% } else { %>
+        <form action="/listings/<%= listing._id %>" method="post" class="listing-form">
+          <fieldset>
+            <legend>---stars---</legend>
+            <div class="listing-form-input-container">
+              <div class="listing-form-input">
+                <input type="radio" id="1" name="rating" value="1"> <label for="1">1</label>
+                <input type="radio" id="2" name="rating" value="2"> <label for="2">2</label>
+                <input type="radio" id="3" name="rating" value="3"> <label for="3">3</label>
+                <input type="radio" id="4" name="rating" value="4"> <label for="4">4</label>
+                <input type="radio" id="5" name="rating" value="5"> <label for="5">5</label>
+              </div>
+            </div>
+          </fieldset>
+          <div>
+            <textarea name="msg" id="msg" placeholder="your review is valuable for us!!"></textarea>
+          </div>
+          <div>
+            <button type="submit" class="btn">rate listing</button>
+          </div>
+        </form>
+        <% } %>
+  </div>
+
+  <div class="listing-review">
+    <% if(listing.reviews.length) { %>
+      <% for(let review of listing.reviews) { %>
+        <div class="review-card">
+          <h3>
+            <%= review.username %>
+          </h3>
+          <div>
+            <b>
+              <%= review.rating %> <span class="listing-star"> &#9734; </span>
+            </b>
+          </div>
+          <div class="listing-description">
+            <%= review.msg %>
+          </div>
+        </div>
+        <% } %>
+          <% } %>
+  </div>

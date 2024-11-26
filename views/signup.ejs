@@ -1,0 +1,30 @@
+<%- layout("partials/boilerplate", {title, user}); %>
+  <div class="form-container">
+    <form action="/user/signup" method="post" class="form">
+      <div>
+        <label for="username">Username</label><input type="text" name="username" id="username" placeholder="@username"
+          required>
+      </div>
+      <div>
+        <label for="email"></label>Email<input type="email" name="email" id="email" placeholder="@mail.com" required>
+      </div>
+      <div>
+        <label for="password"></label>Password<input type="text" name="password" id="password" placeholder="pa*s**d"
+          required>
+      </div>
+      <div>
+        <button type="submit" class="btn">Sign UP</button>
+      </div>
+      <div class="listing-form-input-container position-fix">
+        <div class="listing-form-input">
+          <input type="radio" name="actype" id="local" value="local" checked />
+          <label for="local">local</label>
+          <input type="radio" name="actype" id="admin" value="admin" />
+          <label for="admin">admin</label>
+        </div>
+      </div>
+    </form>
+    <div>
+      already have an account? <a href="/user/signin"> sign in </a>
+    </div>
+  </div>
