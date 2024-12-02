@@ -4,15 +4,21 @@ if (process.env.NODE_ENV != "development") {
 
 const express = require("express");
 const path = require("path");
+const { randomUUID } = require("crypto");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
 const ejsMate = require("ejs-mate");
+
+// database connection
 const connection = require("./utils/init.js");
+
+// routers
 const listingRouter = require("./routes/listing.js");
 const userRouter = require("./routes/user.js");
+
+// middlewares
 const adminRouter = require("./routes/admin.js");
-const { randomUUID } = require("crypto");
 const {
   onlyLoggedInUser,
   isAdmin,

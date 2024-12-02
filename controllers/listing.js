@@ -2,7 +2,11 @@ const Listing = require("../models/listing");
 const Review = require("../models/review");
 const User = require("../models/user");
 const ExpressError = require("../utils/express-error");
-const { cloudUpload, multerStorage } = require("../utils/cloud-init");
+
+// geocoding
+const mbxGeoCoding = require("@mapbox/mapbox-sdk/services/geocoding");
+const mapToken = process.env.MAPBOX_DEFULT_TOKEN;
+const geocodingClient = mbxGeoCoding({ accessToken: mapToken });
 
 // post review
 const handlePostReview = async (req, res) => {
@@ -64,12 +68,19 @@ const handleDeleteListing = async (req, res) => {
 
 const handleCreateLising = async (req, res) => {
   const { listing } = req.body;
-  console.log(req.file);
+  const response = await geocodingClient
+    .forwardGeocode({
+      query: `${listing.location.value} ${listing.location.country}`,
+      limit: 1,
+    })
+    .send();
+  const geometry = response.body.features[0].geometry;
   const { filename, path: url } = req.file;
   let user = req.user;
   const newListing = new Listing(listing);
   newListing.image = { filename, url };
   newListing.createdBy = user._id;
+  newListing.location.geometry = geometry;
   await newListing.save();
   req.flash("success", "listing saved!");
   res.status(200).redirect(`/listings/${newListing._id}`);
@@ -78,7 +89,6 @@ const handleCreateLising = async (req, res) => {
 const handleUpdateLising = async (req, res) => {
   let user = req.user;
   const { listing } = req.body;
-  console.log(req.file);
   const filename = req?.file?.filename;
   const url = req?.file?.path;
   const { id } = req.params;
@@ -132,6 +142,7 @@ const handleReadListing = async (req, res) => {
   res.status(200).render("listing.ejs", {
     listing,
     user,
+    accessToken: process.env.MAPBOX_DEFULT_TOKEN,
     listingCreatedBy,
     title: "listing based on title",
   });
