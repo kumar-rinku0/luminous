@@ -41,4 +41,4 @@ npm run dev
 
 ```
 
-##### Don't forget to turn on RBAC System on, through clerk!
+##### Don't forget to turn add cloudinary CLOUDINARY_URL to .env or .env.local file!
