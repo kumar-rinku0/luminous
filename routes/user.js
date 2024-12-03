@@ -71,7 +71,7 @@ route.post(
     const redirectUrl =
       req.session.originalUrl ||
       (user.role === "admin" ? "/admin/users" : "/listings");
-    res.status(200).redirect(redirectUrl);
+    return res.status(200).redirect(redirectUrl);
   })
 );
 

@@ -83,7 +83,7 @@ const handleCreateLising = async (req, res) => {
   newListing.location.geometry = geometry;
   await newListing.save();
   req.flash("success", "listing saved!");
-  res.status(200).redirect(`/listings/${newListing._id}`);
+  return res.status(200).redirect(`/listings/${newListing._id}`);
 };
 
 const handleUpdateLising = async (req, res) => {
@@ -99,8 +99,18 @@ const handleUpdateLising = async (req, res) => {
   const newListing = await Listing.findById(id);
   newListing.title = listing.title;
   newListing.description = listing.description;
-  newListing.location = listing.location;
-  newListing.country = listing.country;
+  if (newListing.location.value !== listing.location.value) {
+    newListing.location.value = listing.location.value;
+    newListing.location.country = listing.location.country;
+    const response = await geocodingClient
+      .forwardGeocode({
+        query: `${listing.location.value} ${listing.location.country}`,
+        limit: 1,
+      })
+      .send();
+    const geometry = response.body.features[0].geometry;
+    newListing.location.geometry = geometry;
+  }
   newListing.image = filename && url ? { filename, url } : newListing.image;
   await newListing.save();
   req.flash("success", "listing updated!");
@@ -116,7 +126,7 @@ const handleReadUsernameListing = async (req, res) => {
   const listings = await Listing.find({ createdBy: user._id }).sort({
     createdAt: -1,
   });
-  res.status(200).render("listings.ejs", {
+  return res.status(200).render("listings.ejs", {
     listings,
     user,
     myListings: true,
@@ -139,7 +149,7 @@ const handleReadListing = async (req, res) => {
     // throw new ExpressError(404, "Listing Not Found!!");  // async fuction can throw errors this only if they are wrapped with async_wrapper.
     throw new ExpressError(404, "Listing not Found!!");
   }
-  res.status(200).render("listing.ejs", {
+  return res.status(200).render("listing.ejs", {
     listing,
     user,
     accessToken: process.env.MAPBOX_DEFULT_TOKEN,
