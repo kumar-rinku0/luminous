@@ -25,7 +25,7 @@ route.get(
   wrapAsync(async (req, res) => {
     let user = req.user || null;
     let listings = await Listing.find({}).sort({ createdAt: -1 });
-    res.status(200).render("listings.ejs", {
+    return res.status(200).render("listings.ejs", {
       listings,
       myListings: false,
       user,
@@ -36,7 +36,7 @@ route.get(
 
 route.get("/create", onlyLoggedInUser, (req, res) => {
   let user = req.user;
-  res
+  return res
     .status(200)
     .render("create-listing.ejs", { title: "new listing...", user });
 });
@@ -68,7 +68,7 @@ route
     const { id } = req.params;
     const listing = await Listing.findById(id);
     const imageUrl = listing.image.url.replace("/upload", "/upload/w_200");
-    res.status(200).render("edit-listing.ejs", {
+    return res.status(200).render("edit-listing.ejs", {
       title: "edit listing...",
       user,
       listing,
