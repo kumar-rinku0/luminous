@@ -22,13 +22,6 @@ map.addControl(
   })
 );
 
-// const marker1 = new mapboxgl.Marker({ color: "red" })
-//   .setLngLat([75.81248, 26.920341])
-//   .addTo(map);
-
-// value = coordinates.split(",");
-// console.log(value);
-
 const popup = new mapboxgl.Popup({
   className: "map-popup",
   closeButton: true,
@@ -44,7 +37,3 @@ const marker2 = new mapboxgl.Marker({ color: "red" })
   .setLngLat(newCoordinates)
   .setPopup(popup)
   .addTo(map);
-
-// const map = new mapboxgl.Map({)
-// .addControl();
-// const marker1 = new mapboxgl.Marker().setLngLat().addTo(map);

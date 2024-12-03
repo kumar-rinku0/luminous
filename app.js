@@ -7,6 +7,7 @@ const path = require("path");
 const { randomUUID } = require("crypto");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const ejsMate = require("ejs-mate");
 
@@ -34,8 +35,24 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
 // session
+const MONGO_URI = process.env.MONGO_URI;
+const store = MongoStore.create({
+  mongoUrl: MONGO_URI,
+  touchAfter: 24 * 3600,
+  crypto: {
+    secret: process.env.SESSION_SECRET || "KEYBOARD & mE!",
+  },
+  ttl: 7 * 24 * 60 * 60,
+});
+
+store.on("error", (err) => {
+  console.log("ERROR WHILE STORING SESSIONS!", err);
+});
+
 const sessionOptions = {
+  store,
   secret: process.env.SESSION_SECRET || "KEYBOARD & mE!",
   genid: (req) => {
     return randomUUID();
