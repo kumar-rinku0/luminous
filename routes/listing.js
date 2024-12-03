@@ -6,13 +6,14 @@ const wrapAsync = require("../utils/wrap-async.js");
 const User = require("../models/user.js");
 const { onlyLoggedInUser, isLoggedInCheck } = require("../middlewares/auth.js");
 const {
-  handlePostReview,
+  handleCreateReview,
   handleDeleteListing,
   handleCreateLising,
   handleReadUsernameListing,
   handleReadListing,
   handleUpdateLising,
 } = require("../controllers/listing.js");
+const { handleUpdateReview } = require("../middlewares/listing.js");
 const multer = require("multer");
 const { multerStorage } = require("../utils/cloud-init");
 const upload = multer({ storage: multerStorage });
@@ -59,7 +60,11 @@ route.post(
 route
   .route("/:id")
   .get(wrapAsync(handleReadListing))
-  .post(onlyLoggedInUser, wrapAsync(handlePostReview));
+  .post(
+    onlyLoggedInUser,
+    wrapAsync(handleUpdateReview),
+    wrapAsync(handleCreateReview)
+  );
 
 route
   .route("/:id/edit")

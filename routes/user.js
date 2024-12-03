@@ -63,7 +63,8 @@ route.post(
     const { username, password } = req.body;
     const user = await User.isRightUser(username, password);
     if (user.message) {
-      throw new ExpressError(401, user.message);
+      req.flash("error", `${user.message}`);
+      return res.status(200).redirect("/user/signin");
     }
     const token = setUser(user);
     res.cookie("_session_token", token);

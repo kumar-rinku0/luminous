@@ -24,6 +24,7 @@ const {
   onlyLoggedInUser,
   isAdmin,
   isLoggedInCheck,
+  setFlash,
 } = require("./middlewares/auth.js");
 
 const app = express();
@@ -77,12 +78,7 @@ app.get("/", (req, res) => {
   res.status(200).redirect("listings");
 });
 
-// flash middleware
-app.use((req, res, next) => {
-  res.locals.flash_success = req.flash("success");
-  return next();
-});
-
+app.use(setFlash);
 // route middleware
 app.use("/user", userRouter);
 app.use("/listings", isLoggedInCheck, listingRouter);
