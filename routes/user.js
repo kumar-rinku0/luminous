@@ -108,6 +108,19 @@ route
     res.cookie("_session_token", token);
     req.flash("success", "username updated!");
     return res.status(200).redirect("/user/account");
+  })
+  .put(onlyLoggedInUser, async (req, res) => {
+    const user = req.user;
+    const { password } = req.body;
+    const userCheck = await User.isRightUser(user.username, password.old);
+    if (userCheck.message) {
+      req.flash("error", `${userCheck.message}`);
+      return res.status(401).redirect("/user/account");
+    }
+    userCheck.password = password.new;
+    await userCheck.save();
+    req.flash("success", "password updated!");
+    return res.status(200).redirect("/user/account");
   });
 
 route.delete("/destroy", onlyLoggedInUser, async (req, res) => {
