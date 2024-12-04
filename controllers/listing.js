@@ -9,37 +9,12 @@ const mapToken = process.env.MAPBOX_DEFULT_TOKEN;
 const geocodingClient = mbxGeoCoding({ accessToken: mapToken });
 
 // post review
-const handlePostReview = async (req, res) => {
+const handleCreateReview = async (req, res) => {
   let user = req.user;
   const { id } = req.params;
   const { rating, msg } = req.body;
-  if (id.toString().length != 24) {
-    throw new ExpressError(400, "Listing id is incorrect!!");
-  }
   const listing = await Listing.findById(id);
-  if (!listing) {
-    throw new ExpressError(404, "Listing not Found!!");
-  }
-  if (listing.createdBy.toString() === user._id.toString()) {
-    throw new ExpressError(403, "You can't rate your own listing!!");
-  }
-  const popListing = await Listing.findById(id).populate("reviews");
-  const reviews = popListing.reviews.filter((value) => {
-    return value.username === user.username;
-  });
-  if (reviews[0] && (rating || msg)) {
-    const review = reviews[0];
-    review.rating = rating || review.rating;
-    review.msg = msg || review.msg;
-    await review.save();
-    return res.status(201).redirect(`/listings/${listing._id}`);
-  }
-  if (!rating) {
-    throw new ExpressError(400, "Bad Req!! No rating stars provided.");
-  }
-  if (!msg.trim()) {
-    throw new ExpressError(400, "Bad Req!! No msg.");
-  }
+
   const review = new Review({
     rating,
     msg,
@@ -63,7 +38,7 @@ const handleDeleteListing = async (req, res) => {
   }
   await Listing.findByIdAndDelete(id);
   req.flash("success", "listing pruned!!");
-  return res.status(200).redirect("/listings");
+  return res.status(200).redirect("/");
 };
 
 const handleCreateLising = async (req, res) => {
@@ -99,6 +74,7 @@ const handleUpdateLising = async (req, res) => {
   const newListing = await Listing.findById(id);
   newListing.title = listing.title;
   newListing.description = listing.description;
+  newListing.price = listing.price;
   if (newListing.location.value !== listing.location.value) {
     newListing.location.value = listing.location.value;
     newListing.location.country = listing.location.country;
@@ -114,7 +90,7 @@ const handleUpdateLising = async (req, res) => {
   newListing.image = filename && url ? { filename, url } : newListing.image;
   await newListing.save();
   req.flash("success", "listing updated!");
-  return res.status(200).redirect("/listings");
+  return res.status(200).redirect(`/listings/${newListing._id}`);
 };
 
 const handleReadUsernameListing = async (req, res) => {
@@ -138,16 +114,18 @@ const handleReadListing = async (req, res) => {
   let user = req.user || null;
   const { id } = req.params;
   if (id.toString().length != 24) {
-    throw new ExpressError(400, "Listing id is incorrect!!");
+    // throw new ExpressError(400, "Listing id is incorrect!!");
+    req.flash("error", "Listing id is incorrect!!");
+    return res.status(400).redirect("/listings");
   }
   const listing = await Listing.findById(id).populate("reviews");
+  if (!listing) {
+    req.flash("error", "Listing id is invalid!!");
+    return res.status(400).redirect("/listings");
+  }
   const listingCreatedBy = await User.findById(listing.createdBy);
   if (user && listing.createdBy === user._id) {
     listingCreatedBy = null;
-  }
-  if (!listing) {
-    // throw new ExpressError(404, "Listing Not Found!!");  // async fuction can throw errors this only if they are wrapped with async_wrapper.
-    throw new ExpressError(404, "Listing not Found!!");
   }
   return res.status(200).render("listing.ejs", {
     listing,
@@ -159,7 +137,7 @@ const handleReadListing = async (req, res) => {
 };
 
 module.exports = {
-  handlePostReview,
+  handleCreateReview,
   handleDeleteListing,
   handleReadUsernameListing,
   handleCreateLising,

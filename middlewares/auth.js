@@ -36,8 +36,16 @@ const isAdmin = (req, res, next) => {
   return next();
 };
 
+// flash middleware
+const setFlash = (req, res, next) => {
+  res.locals.flash_success = req.flash("success");
+  res.locals.flash_error = req.flash("error");
+  return next();
+};
+
 module.exports = {
   isLoggedInCheck,
   onlyLoggedInUser,
   isAdmin,
+  setFlash,
 };

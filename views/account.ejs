@@ -1,0 +1,20 @@
+<%- layout("partials/boilerplate", {title, user}); %>
+
+  <div>
+    <div>
+      <%= user.username %>
+        <button type="button" class="btn btn-outline-secondary" id="update-username">update username</button>
+    </div>
+    <div>
+      status: <%= user.status %>
+    </div>
+    <div>
+      role: <%= user.role %>
+    </div>
+    <div>
+      <form action="/user/destroy?_method=DELETE" method="post">
+        <p>deleting account will delete all your created listings!</p>
+        <button type="submit" class="btn btn-danger">DELETE ACCOUNT</button>
+      </form>
+    </div>
+  </div>
