@@ -28,10 +28,10 @@ const handleUpdateReview = async (req, res, next) => {
   const reviews = popListing.reviews.filter((value) => {
     return value.username === user.username;
   });
-  if (reviews[0] && (rating || msg)) {
+  if (reviews[0] && (rating || msg.trim())) {
     const review = reviews[0];
     review.rating = rating || review.rating;
-    review.msg = msg || review.msg;
+    review.msg = msg.trim() || review.msg;
     await review.save();
     req.flash("success", "Review Updated!!");
     return res.status(201).redirect(`/listings/${listing._id}`);

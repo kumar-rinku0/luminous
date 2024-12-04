@@ -10,6 +10,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const ejsMate = require("ejs-mate");
+methodOverride = require("method-override");
 
 // database connection
 const connection = require("./utils/init.js");
@@ -36,6 +37,7 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(methodOverride("_method"));
 
 // session
 const MONGO_URI = process.env.MONGO_URI;
@@ -70,15 +72,17 @@ const sessionOptions = {
 app.set("trust proxy", 1);
 app.use(session(sessionOptions));
 app.use(flash());
+
 // database connection.
 connection();
+
+app.use(setFlash);
 
 // root route
 app.get("/", (req, res) => {
   res.status(200).redirect("listings");
 });
 
-app.use(setFlash);
 // route middleware
 app.use("/user", userRouter);
 app.use("/listings", isLoggedInCheck, listingRouter);
@@ -86,6 +90,7 @@ app.use("/admin", onlyLoggedInUser, isAdmin, adminRouter);
 
 // err middleware
 app.use((err, req, res, next) => {
+  console.log(err);
   const { status = 500, message } = err;
   let user = req.user;
   if (!user) {

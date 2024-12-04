@@ -58,6 +58,7 @@
             </div>
           </div>
         </form>
+        <script src="/js/script.js"></script>
         <% } %>
   </div>
 
@@ -65,9 +66,9 @@
     <% if(listing.reviews.length) { %>
       <% for(let review of listing.reviews) { %>
         <div class="review-card">
-          <h3>
-            <%= review.username %>
-          </h3>
+          <h5>
+            @ <%= review.username %>
+          </h5>
           <div>
             <p class=" " data-rating="<%= review.rating %>">
             <p class="starability-result" data-rating="<%= review.rating %>">

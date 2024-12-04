@@ -40,7 +40,6 @@ const isAdmin = (req, res, next) => {
 const setFlash = (req, res, next) => {
   res.locals.flash_success = req.flash("success");
   res.locals.flash_error = req.flash("error");
-  console.log(res.locals.flash_error, res.locals.flash_success);
   return next();
 };
 

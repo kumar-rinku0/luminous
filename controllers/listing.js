@@ -38,7 +38,7 @@ const handleDeleteListing = async (req, res) => {
   }
   await Listing.findByIdAndDelete(id);
   req.flash("success", "listing pruned!!");
-  return res.status(200).redirect("/listings");
+  return res.status(200).redirect("/");
 };
 
 const handleCreateLising = async (req, res) => {
@@ -114,11 +114,14 @@ const handleReadListing = async (req, res) => {
   let user = req.user || null;
   const { id } = req.params;
   if (id.toString().length != 24) {
-    throw new ExpressError(400, "Listing id is incorrect!!");
+    // throw new ExpressError(400, "Listing id is incorrect!!");
+    req.flash("error", "Listing id is incorrect!!");
+    return res.status(400).redirect("/listings");
   }
   const listing = await Listing.findById(id).populate("reviews");
   if (!listing) {
-    throw new ExpressError(400, "Listing id is invalid!!");
+    req.flash("error", "Listing id is invalid!!");
+    return res.status(400).redirect("/listings");
   }
   const listingCreatedBy = await User.findById(listing.createdBy);
   if (user && listing.createdBy === user._id) {
