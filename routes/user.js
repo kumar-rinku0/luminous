@@ -83,10 +83,32 @@ route.get("/signout", (req, res) => {
   return res.status(200).redirect("/");
 });
 
-route.get("/account", onlyLoggedInUser, (req, res) => {
-  const user = req.user;
-  return res.render("account.ejs", { title: "account settings...", user });
-});
+route
+  .route("/account")
+  .get(onlyLoggedInUser, (req, res) => {
+    const user = req.user;
+    return res.render("account.ejs", { title: "account settings...", user });
+  })
+  .patch(onlyLoggedInUser, async (req, res) => {
+    const user = req.user;
+    const { username } = req.body;
+    const userCheck = await User.findOne({ username });
+    if (userCheck) {
+      req.flash("error", "invalid username!");
+      return res.status(400).redirect("/user/account");
+    }
+    const updatedUser = await User.findOneAndUpdate(
+      { username: user.username },
+      { username },
+      { new: true }
+    );
+    console.log(updatedUser);
+    req.user = updatedUser;
+    const token = setUser(updatedUser);
+    res.cookie("_session_token", token);
+    req.flash("success", "username updated!");
+    return res.status(200).redirect("/user/account");
+  });
 
 route.delete("/destroy", onlyLoggedInUser, async (req, res) => {
   const user = req.user;

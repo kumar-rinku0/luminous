@@ -1,20 +1,74 @@
 <%- layout("partials/boilerplate", {title, user}); %>
 
-  <div>
-    <div>
-      <%= user.username %>
-        <button type="button" class="btn btn-outline-secondary" id="update-username">update username</button>
+  <div class="account-page">
+
+    <div class="account">
+      <div class="px-4 py-2">
+        <%= user.username %>
+          <button type="button" class="btn btn-outline-secondary" id="update-username">update username</button>
+      </div>
+      <div class="p-4 flex-gap opacity-0">
+        <form action="/user/account?_method=PATCH" method="post" class="flex-gap needs-vailidation" novalidate>
+          <input type="text" name="username" id="username" class="form-control" value="<%= user.username %>">
+          <button type="submit" class="btn btn-secondary">Save</button>
+        </form>
+        <button type="button" id="cancel-username" class="btn btn-outline-secondary">Cancel</button>
+      </div>
+      <div class="px-4">
+        <div>
+          status: <%= user.status %>
+        </div>
+        <div>
+          role: <%= user.role %>
+        </div>
+      </div>
+      <div class="px-4">
+        <div>
+          <button type="button" class="btn btn-danger" id="change-password">Change Password</button>
+        </div>
+      </div>
+      <div class="px-4 pb-2 flex-gap opacity-0">
+        <form action="/user/account?_method=PUT" method="post" class="flex-direction flex-gap needs-vailidation"
+          novalidate>
+          <label for="password" class="form-label mb-0">password</label>
+          <input type="password" name="password" id="password" class="form-control">
+          <label for="conf-password" class="form-label mb-0">confirm password</label>
+          <input type="password" name="password" id="conf-password" class="form-control">
+          <button type="submit" class="btn btn-secondary">Save</button>
+          <button type="button" id="cancel-password" class="btn btn-outline-secondary">Cancel</button>
+        </form>
+      </div>
+      <div>
+        <form action="/user/destroy?_method=DELETE" method="post">
+          <div class="px-4 text-sm green">Deleting account will delete all your created listings!</div>
+          <div class="px-4 py-2">
+            <button type="submit" class="btn btn-danger">DELETE ACCOUNT</button>
+          </div>
+        </form>
+      </div>
     </div>
-    <div>
-      status: <%= user.status %>
-    </div>
-    <div>
-      role: <%= user.role %>
-    </div>
-    <div>
-      <form action="/user/destroy?_method=DELETE" method="post">
-        <p>deleting account will delete all your created listings!</p>
-        <button type="submit" class="btn btn-danger">DELETE ACCOUNT</button>
-      </form>
-    </div>
+
   </div>
+  <script>
+    const updateUsernameBtn = document.getElementById("update-username");
+    const cancelUsernameBtn = document.getElementById("cancel-username");
+    updateUsernameBtn.addEventListener("click", () => {
+      updateUsernameBtn.parentElement.classList.add("opacity-0");
+      cancelUsernameBtn.parentElement.classList.remove("opacity-0");
+    })
+    cancelUsernameBtn.addEventListener("click", () => {
+      cancelUsernameBtn.parentElement.classList.add("opacity-0");
+      updateUsernameBtn.parentElement.classList.remove("opacity-0");
+    })
+
+    const changePasswordBtn = document.getElementById("change-password");
+    const cancelPasswordBtn = document.getElementById("cancel-password");
+    changePasswordBtn.addEventListener("click", () => {
+      changePasswordBtn.parentElement.parentElement.classList.add("opacity-0");
+      cancelPasswordBtn.parentElement.parentElement.classList.remove("opacity-0");
+    })
+    cancelPasswordBtn.addEventListener("click", () => {
+      cancelPasswordBtn.parentElement.parentElement.classList.add("opacity-0");
+      changePasswordBtn.parentElement.parentElement.classList.remove("opacity-0");
+    })
+  </script>

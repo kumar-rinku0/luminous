@@ -322,6 +322,16 @@ fieldset {
     flex-direction: column;
     gap: 0.5rem;
   }
+
+  .account-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70vh;
+  }
+  .account {
+    width: 25rem;
+  }
   
   .desktop {
     display: flex;
