@@ -75,6 +75,20 @@ body {
   padding: 1rem;
 }
 
+.my-card a {
+  text-decoration: none;
+  color: #212121;
+}
+
+.my-card:hover {
+  transform: scale(1.02);
+}
+
+.flex-justify-between {
+  display: flex;
+  justify-content: space-between;
+}
+
 .listings-img {
   width: 20rem;
   height: 15rem;
@@ -91,16 +105,12 @@ body {
 .listing-container {
   height: 75vh;
   display: flex ;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   flex-direction: column;
   gap: 0.5rem ;
 }
 
-
-.my-card a {
-  text-decoration: none;
-}
 
 .logo-icon {
   text-decoration: none;
@@ -146,11 +156,7 @@ section, header {
 }
 
 .form-control {
-  width: 80%;
-}
-
-.feedback .form-control {
-  width: 80%;
+  width: 90%;
 }
 
 .form-container {
@@ -292,12 +298,23 @@ fieldset {
 .green {
   color: green;
 }
+
 .flash {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
   height: 4rem;
+}
+
+.account {
+  display: flex;  
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.hidden {
+  display: none;
 }
 
 
