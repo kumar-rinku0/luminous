@@ -3,11 +3,13 @@
   <div class="account-page">
 
     <div class="account">
-      <div class="px-4 py-2">
-        <%= user.username %>
-          <button type="button" class="btn btn-outline-secondary" id="update-username">update username</button>
+      <div class="account-username px-4 py-2">
+        <span>
+          <%= user.username %>
+        </span>
+        <button type="button" class="btn btn-outline-secondary" id="update-username">update username</button>
       </div>
-      <div class="p-4 flex-gap opacity-0">
+      <div class="px-4 py-2 flex-gap hidden">
         <form action="/user/account?_method=PATCH" method="post" class="flex-gap needs-validation" novalidate>
           <input type="text" name="username" id="username" class="form-control" value="<%= user.username %>" required>
           <button type="submit" class="btn btn-secondary">Save</button>
@@ -24,12 +26,12 @@
           role: <%= user.role %>
         </div>
       </div>
-      <div class="px-4">
+      <div class="px-4 pb-2">
         <div>
           <button type="button" class="btn btn-danger" id="change-password">Change Password</button>
         </div>
       </div>
-      <div class="px-4 pb-2 flex-gap opacity-0">
+      <div class="px-4 pb-2 flex-gap hidden">
         <form action="/user/account?_method=PUT" method="post" class="flex-direction flex-gap needs-validation"
           novalidate>
           <label for="password" class="form-label mb-0">old password</label>
@@ -42,13 +44,13 @@
       </div>
       <div>
         <form action="/user/destroy?_method=DELETE" method="post" class="needs-validation" novalidate>
-          <div class="form-check px-4 text-sm">
-            <input class="form-check-input text-sm" type="checkbox" value="" id="invalidCheck" required>
-            <label class="form-check-label text-sm" for="invalidCheck">
+          <div class="form-check mx-4 my-2 text-sm">
+            <input class="form-check-input " type="checkbox" value="" id="invalidCheck" required>
+            <label class="form-check-label" for="invalidCheck">
               Deleting account will delete all your created
               listings!
             </label>
-            <div class="invalid-feedback text-sm">
+            <div class="invalid-feedback">
               You must agree before deteting your account!
             </div>
           </div>

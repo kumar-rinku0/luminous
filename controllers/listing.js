@@ -1,7 +1,12 @@
 const Listing = require("../models/listing");
-const Review = require("../models/review");
 const User = require("../models/user");
 const ExpressError = require("../utils/express-error");
+
+// time in ago
+const TimeAgo = require("javascript-time-ago");
+// English.
+const en = require("javascript-time-ago/locale/en");
+TimeAgo.addDefaultLocale(en);
 
 // geocoding
 const mbxGeoCoding = require("@mapbox/mapbox-sdk/services/geocoding");
@@ -9,22 +14,6 @@ const mapToken = process.env.MAPBOX_DEFULT_TOKEN;
 const geocodingClient = mbxGeoCoding({ accessToken: mapToken });
 
 // post review
-const handleCreateReview = async (req, res) => {
-  let user = req.user;
-  const { id } = req.params;
-  const { rating, msg } = req.body;
-  const listing = await Listing.findById(id);
-
-  const review = new Review({
-    rating,
-    msg,
-    username: user.username,
-  });
-  listing.reviews.push(review);
-  await review.save();
-  await listing.save();
-  return res.status(201).redirect(`/listings/${listing._id}`);
-};
 
 const handleDeleteListing = async (req, res) => {
   const { id, createdBy } = req.params;
@@ -41,7 +30,7 @@ const handleDeleteListing = async (req, res) => {
   return res.status(200).redirect("/");
 };
 
-const handleCreateLising = async (req, res) => {
+const handleCreateListing = async (req, res) => {
   const { listing } = req.body;
   const response = await geocodingClient
     .forwardGeocode({
@@ -93,14 +82,19 @@ const handleUpdateLising = async (req, res) => {
   return res.status(200).redirect(`/listings/${newListing._id}`);
 };
 
-const handleReadUsernameListing = async (req, res) => {
+const handleShowUsernameListings = async (req, res) => {
   let user = req.user;
   const { username } = req.params;
   if (username !== user.username.toString()) {
     throw new ExpressError(400, "Bad Requiest!! incorrect username!");
   }
-  const listings = await Listing.find({ createdBy: user._id }).sort({
+  let listings = await Listing.find({ createdBy: user._id }).sort({
     createdAt: -1,
+  });
+  // Create formatter (English).
+  const timeAgo = new TimeAgo("en-US");
+  listings = listings.map((item) => {
+    return { item, time: timeAgo.format(item.createdAt) };
   });
   return res.status(200).render("listings.ejs", {
     listings,
@@ -110,7 +104,23 @@ const handleReadUsernameListing = async (req, res) => {
   });
 };
 
-const handleReadListing = async (req, res) => {
+const handleShowListings = async (req, res) => {
+  let user = req.user || null;
+  let listings = await Listing.find({}).sort({ createdAt: -1 });
+  // Create formatter (English).
+  const timeAgo = new TimeAgo("en-US");
+  listings = listings.map((item) => {
+    return { item, time: timeAgo.format(item.createdAt) };
+  });
+  return res.status(200).render("listings.ejs", {
+    listings,
+    myListings: false,
+    user,
+    title: "listings!!!",
+  });
+};
+
+const handleShowOneListing = async (req, res) => {
   let user = req.user || null;
   const { id } = req.params;
   if (id.toString().length != 24) {
@@ -137,10 +147,10 @@ const handleReadListing = async (req, res) => {
 };
 
 module.exports = {
-  handleCreateReview,
   handleDeleteListing,
-  handleReadUsernameListing,
-  handleCreateLising,
+  handleShowUsernameListings,
+  handleCreateListing,
   handleUpdateLising,
-  handleReadListing,
+  handleShowOneListing,
+  handleShowListings,
 };
